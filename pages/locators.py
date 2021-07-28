@@ -13,7 +13,7 @@ class MainPageLocators():
 	BTN_ADD_IN_FORM_ADD_PAYMENT = (By.CSS_SELECTOR,".widget__footer .button--state-filled .button__content")
 	MESSAGE_ABOUT_SUCCESFUL_ADD = (By.CSS_SELECTOR,".notification.notification--type-success .notification__body")
 	BREADCRUMB_HOME_LINK = (By.CSS_SELECTOR,".breadcrumbs .breadcrumb__label")
-	SEACRH_FIELD_IN_TABLES = (By.CSS_SELECTOR,"label input")
+	SEACRH_FIELD_IN_TABLES = (By.CSS_SELECTOR,".input__input")
 
 
 class LoginPageLocators():
