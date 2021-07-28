@@ -1,0 +1,90 @@
+from .base_page import BasePage
+from .locators import MainPageLocators
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import pytest
+import time 
+
+class MainPage(BasePage):
+	def __init__(self, *args, **kwargs):
+		super(MainPage, self).__init__(*args, **kwargs)
+
+	def should_be_main_page(self):
+		print(*MainPageLocators.HEAD_TABEL)
+		assert self.is_elements_present(*MainPageLocators.HEAD_TABEL),\
+		'должно присутствовать в DOM и видемо на страничке Заголовоки колонок'
+		assert self.should_be_add_btn(),\
+		'должно быть кнопка "Добавить платёж"'
+
+	def should_be_add_btn(self):
+		btn = self.is_element_present(*MainPageLocators.ADD_PAYMENT_BUTTON).click()
+
+	def should_be_tabel_in_form(self):
+		assert self.is_element_present_and_visibl(*MainPageLocators.ADD_PAYMENT_BUTTON),\
+		'Нет кнопки'
+		time.sleep(0)
+		assert self.text_element_equel_text(*MainPageLocators.HEAD_TABEL,0,'source'),\
+		'Нет части таблицы с полями source'
+
+		assert self.text_element_equel_text(*MainPageLocators.HEAD_TABEL,1,'status'),\
+		'Нет части таблицы с полями status'
+
+		assert self.text_element_equel_text(*MainPageLocators.HEAD_TABEL,2,'amount_fact'),\
+		'Нет части таблицы с полями amount_fact'
+
+		assert self.text_element_equel_text(*MainPageLocators.HEAD_TABEL,3,'date_fact'),\
+		'Нет части таблицы с полями date_fact'
+	
+	def should_be_btn_in_main_page(self):
+		assert self.is_element_present_and_visibl(*MainPageLocators.ADD_PAYMENT_BUTTON),\
+		'Нет кнопки Над основной таблицей'
+
+	def should_be_go_to_the_next_table(self):
+		assert self.is_elements_present_i(*MainPageLocators.BOTOM_BTN,1),\
+		'Нижняя кнопка не обнаруженна'
+		list_l = self.driver.find_elements(*MainPageLocators.BOTOM_BTN)
+		assert len(list_l) == 3,\
+		'должно быть 3 кнопки(4 далее)'
+
+	def create_new_payment(self):
+		assert self.is_element_present_and_visibl(*MainPageLocators.ADD_PAYMENT_BUTTON),\
+		'Нет кнопки'
+		btn = self.driver.find_element(*MainPageLocators.ADD_PAYMENT_BUTTON)
+		btn.click()
+
+	def should_be_add_payment_form_form(self):
+		assert self.is_element_present_and_visibl(*MainPageLocators.FORM_ADD_PAYMENT),\
+		'Нет формы'
+
+	def add_description_field(self):
+		description = self.driver.find_elements(*MainPageLocators.TEXT_AREA_PAYMENT_FORM)[0]
+		description.send_keys('Individual nameQWERTY123')
+
+	def click_on_create_new_payment_in_payment_form(self):
+		self.click_on_button(*MainPageLocators.BTN_ADD_IN_FORM_ADD_PAYMENT)
+
+	def should_be_succesful_message(self):
+		assert self.is_element_present_and_visibl(*MainPageLocators.MESSAGE_ABOUT_SUCCESFUL_ADD),\
+		"Нет всплывающей подсказки о добавлении платежа"
+
+	def save_url_number(self):
+		time.sleep(1)
+		return self.driver.current_url
+
+	def go_to_the_main_page_of_the_breadcrumbs(self):
+		assert self.is_element_present_and_visibl(*MainPageLocators.ADD_PAYMENT_BUTTON),\
+		'Нет кнопки Над основной таблицей'
+		self.click_on_button(*MainPageLocators.BREADCRUMB_HOME_LINK)
+
+	def should_be_search_field(self):
+		assert self.is_element_present_and_visibl(*MainPageLocators.SEACRH_FIELD_IN_TABLES),\
+		'Нет поля поиска'
+
+
+	def search_for_a_description(self, text):
+		time.sleep(3)
+		search = self.driver.find_elements(*MainPageLocators.SEACRH_FIELD_IN_TABLES)[-1]
+		#self.driver.execute_script("document.querySelector('.input .input__input').click())")
+		#self.driver.execute_script("document.querySelector('.input .input__input').setAttribute('value', 'texwta')")
+		#self.driver.execute_script("document.querySelector('.input .input__input').keyPress('elementid', '\\13')")
+		search.click()
