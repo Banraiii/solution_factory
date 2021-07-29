@@ -14,7 +14,8 @@ class MainPageLocators():
 	MESSAGE_ABOUT_SUCCESFUL_ADD = (By.CSS_SELECTOR,".notification.notification--type-success .notification__body")
 	BREADCRUMB_HOME_LINK = (By.CSS_SELECTOR,".breadcrumbs .breadcrumb__label")
 	SEACRH_FIELD_IN_TABLES = (By.CSS_SELECTOR,".input__input")
-
+	FIRST_ELEMENT_IN_TABLE_FOUND = (By.CSS_SELECTOR,".table--is-responsive tr")
+	FIRST_IN_TABLE_FOUND_DESCRIPTION = (By.CSS_SELECTOR,".table--is-responsive tr span")
 
 class LoginPageLocators():
 	INPUT_FIELDS = (By.CSS_SELECTOR, ".form-field__field input")

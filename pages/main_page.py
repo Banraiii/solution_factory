@@ -2,6 +2,7 @@ from .base_page import BasePage
 from .locators import MainPageLocators
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import ActionChains
 import pytest
 import time 
 
@@ -10,14 +11,14 @@ class MainPage(BasePage):
 		super(MainPage, self).__init__(*args, **kwargs)
 
 	def should_be_main_page(self):
-		print(*MainPageLocators.HEAD_TABEL)
-		assert self.is_elements_present(*MainPageLocators.HEAD_TABEL),\
+		assert self.is_element_present_and_visibl(*MainPageLocators.ADD_PAYMENT_BUTTON),\
+		'Нет кнопки'
+		assert self.is_elements_present_i(*MainPageLocators.HEAD_TABEL, 0),\
 		'должно присутствовать в DOM и видемо на страничке Заголовоки колонок'
-		assert self.should_be_add_btn(),\
-		'должно быть кнопка "Добавить платёж"'
+
 
 	def should_be_add_btn(self):
-		btn = self.is_element_present(*MainPageLocators.ADD_PAYMENT_BUTTON).click()
+		self.is_element_present_and_visibl(*MainPageLocators.ADD_PAYMENT_BUTTON)
 
 	def should_be_tabel_in_form(self):
 		assert self.is_element_present_and_visibl(*MainPageLocators.ADD_PAYMENT_BUTTON),\
@@ -58,7 +59,9 @@ class MainPage(BasePage):
 
 	def add_description_field(self):
 		description = self.driver.find_elements(*MainPageLocators.TEXT_AREA_PAYMENT_FORM)[0]
-		description.send_keys('Individual nameQWERTY123')
+		save = f'Kostyans { time.time() }'
+		description.send_keys(save)
+		return save
 
 	def click_on_create_new_payment_in_payment_form(self):
 		self.click_on_button(*MainPageLocators.BTN_ADD_IN_FORM_ADD_PAYMENT)
@@ -74,19 +77,33 @@ class MainPage(BasePage):
 	def go_to_the_main_page_of_the_breadcrumbs(self):
 		assert self.is_element_present_and_visibl(*MainPageLocators.ADD_PAYMENT_BUTTON),\
 		'Нет кнопки Над основной таблицей'
-		self.click_on_button(*MainPageLocators.BREADCRUMB_HOME_LINK)
+		self.click_on_button(*MainPageLocators.FIRST_ELEMENT_IN_TABLE_FOUND)
 
 	def should_be_search_field(self):
-		assert self.is_element_present_and_visibl(*MainPageLocators.SEACRH_FIELD_IN_TABLES),\
+		search = self.driver.find_elements(*MainPageLocators.FIRST_IN_TABLE_FOUND_DESCRIPTION)[-1]
+		assert search != False,\
 		'Нет поля поиска'
 
 
 	def search_for_a_description(self, text):
-		time.sleep(3)
-		search = self.driver.find_element(*MainPageLocators.SEACRH_FIELD_IN_TABLES)
-		#self.driver.execute_script("document.querySelector('.input .input__input').click())")
-		#self.driver.execute_script("document.querySelector('.input .input__input').setAttribute('value', 'texwta')")
-		#self.driver.execute_script("document.querySelector('.input .input__input').keyPress('elementid', '\\13')")
-		search.click()
-		search.send_keys(str(text))
-		search.send_keys(Keys.RETURN)
+		actionChains = ActionChains(self.driver)
+		search_field = self.driver.find_elements(*MainPageLocators.SEACRH_FIELD_IN_TABLES)[-1]
+		actionChains.move_to_element(search_field).click(search_field).send_keys(text).perform()
+		time.sleep(1)
+		search_field.send_keys(Keys.RETURN)
+		time.sleep(1)
+
+	def go_to_the_edit_payment(self):
+		first_desc = self.is_element_present_and_visibl(*MainPageLocators.FIRST_ELEMENT_IN_TABLE_FOUND)
+		actionChains = ActionChains(self.driver)
+		search_field = self.driver.find_elements(*MainPageLocators.FIRST_IN_TABLE_FOUND_DESCRIPTION)[0]
+		actionChains.move_to_element(search_field).click(search_field).perform()
+		time.sleep(2)
+
+	def should_be_previously_created_payment(self, url):
+		new_description = self.driver.find_elements(*MainPageLocators.TEXT_AREA_PAYMENT_FORM)[0]	
+		#if new_description.text != save_description:
+		#	assert False,'description не совпадает с сохранённым'
+		if self.driver.current_url != url:
+			assert False,'Url не совпадает с сохранённым'
+		return True

@@ -13,4 +13,3 @@ def test_user_can_log_in(driver):
 	login_page.go_the_main_page()
 	main_page = MainPage(driver, driver.current_url)
 	main_page.should_be_main_page()
-	time.sleep(2)
